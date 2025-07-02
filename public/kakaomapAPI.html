@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8"/>
+    <title>kakao map</title>
+    <link rel="stylesheet" href="/css/style.css"/>
+</head>
+<body>
+    <div class="header">kakao map 관광지 안내</div>
+    <div class="body">
+        <div class="leftside">
+            <ul id="category">
+                <li onclick="moveLocation(37.52990, 126.98021, 7, 'k1')">서울특별시</li>
+                <li onclick="moveLocation(37.74741, 127.07219, 8, 'k2')">경기북부</li>
+                <li onclick="moveLocation(37.30875, 126.94711, 8, 'k3')">경기남부</li>
+                <li onclick="moveLocation(37.45368, 126.69186, 7, 'k4')">인천광역시</li>
+
+                <li onclick="moveLocation(37.83961, 128.20991, 10, 'k5')">강원도</li>
+                <li onclick="moveLocation(36.64648, 127.49463, 8, 'k6')">충청북도</li>
+                <li onclick="moveLocation(36.65600, 126.67439, 8, 'k7')">충청남도</li>
+                <li onclick="moveLocation(35.81993, 127.10909, 8, 'k8')">전라북도</li>
+                <li onclick="moveLocation(34.81370, 126.46238, 8, 'k9')">전라남도</li>
+                <li onclick="moveLocation(36.57559, 128.50570, 8, 'k10')">경상북도</li>
+                <li onclick="moveLocation(35.23756, 128.69199, 8, 'k11')">경상남도</li>
+                <li onclick="moveLocation(33.36185, 126.51972, 10, 'k12')">제주특별시</li>
+            </ul>
+        </div>
+        <div class="content">
+            <div id = "map" style="min-width:800px; min-height:600px;"></div>
+        </div>
+        <div class="rightside">
+            <ul id="placeList">
+            </ul>
+        </div>
+    </div>
+    <div class="footer"></div>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6cdd01d2822b09f034e6543288993ab5&libraries=services"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=6cdd01d2822b09f034e6543288993ab5"></script>
+    <script>
+        var geocoder = new kakao.maps.services.Geocoder();
+        var map_strd_posX = 37.52990;
+        var map_strd_posY = 126.98021;
+        var mapInitLevel = 7;
+
+        // place list 정의
+        // 서울
+        var k1PlastList = [
+            { title : '경복궁', address : '서울 종로구 사직로 161 경복궁', id : 'k1', url: "https://ko.wikipedia.org/wiki/%EA%B2%BD%EB%B3%B5%EA%B6%81" },
+            { title : '남산타워', address : '서울 용산구 남산공원길 105', id : 'k2', url: "https://ko.wikipedia.org/wiki/N%EC%84%9C%EC%9A%B8%ED%83%80%EC%9B%8C"  },
+            { title : '롯데월드', address : '서울 송파구 올림픽로 240', id : 'k3', url: "https://ko.wikipedia.org/wiki/%EB%A1%AF%EB%8D%B0%EC%9B%94%EB%93%9C"  },
+            { title : '서울숲공원', address : '서울 성동구 뚝섬로 273', id : 'k4', url: "https://ko.wikipedia.org/wiki/%EC%84%9C%EC%9A%B8%EC%88%B2"  },
+            { title : '북촌한옥마을', address : '서울 종로구 계동길 37', id : 'k5', url:"https://ko.wikipedia.org/wiki/%EB%B6%81%EC%B4%8C_%ED%95%9C%EC%98%A5%EB%A7%88%EC%9D%84"},
+            { title : '창덕궁', address : '서울 종로구 율곡로 99', id : 'k6', url:"https://ko.wikipedia.org/wiki/%EC%B0%BD%EB%8D%95%EA%B6%81"},
+            { title : '숭례문', address : '서울 중구 세종대로 40', id : 'k7', url:"https://ko.wikipedia.org/wiki/%EC%88%AD%EB%A1%80%EB%AC%B8" }
+        ];
+        // 경기북부
+        var k2PlastList = [
+            { title : '어린이박물관', address : '경기도 동두천시 평화로2910번길 46', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EC%96%B4%EB%A6%B0%EC%9D%B4_%EB%B0%95%EB%AC%BC%EA%B4%80" }
+        ];
+        // 경기남부
+        var k3PlastList = [
+            { title : '광교호수공원', address : '경기 수원시 영통구 광교호수로 165', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EA%B4%91%EA%B5%90%ED%98%B8%EC%88%98%EA%B3%B5%EC%9B%90" }
+        ];
+        // 인천
+        var k4PlastList = [
+            { title : '차이나타운', address : '인천 중구 차이나타운로26번길 12-17', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EC%B0%A8%EC%9D%B4%EB%82%98%ED%83%80%EC%9A%B4" }
+        ];
+        //강원도
+        var k5PlastList = [
+            { title : '설악산입구', address : '강원도 속초시 설악동', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EC%84%A4%EC%95%85%EC%82%B0" }
+        ];
+        //충청북도
+        var k6PlastList = [
+            { title : '고수동굴', address : '충북 단양군 단양읍 고수동굴길 8', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EB%8B%A8%EC%96%91_%EA%B3%A0%EC%88%98%EB%8F%99%EA%B5%B4" }
+        ];
+        //충청남도
+        var k7PlastList = [
+            { title : '꽃지해수욕장', address : '충남 태안군 안면읍 승언리', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EA%BD%83%EC%A7%80%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5" }
+        ];
+        //전라북도
+        var k8PlastList = [
+            { title : '전주 한옥마을', address : '전북 전주시 완산구 기린대로 99', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EC%A0%84%EC%A3%BC%ED%95%9C%EC%98%A5%EB%A7%88%EC%9D%84" }
+        ];
+        //전라남도
+        var k9PlastList = [
+            { title : '여수 해상케이블카', address : '전남 여수시 돌산읍 돌산로 3600-1', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EC%97%AC%EC%88%98_%ED%95%B4%EC%83%81%EC%BC%80%EC%9D%B4%EB%B8%94%EC%B9%B4"},
+            { title : '순천만 국가정원', address : '전남 순천시 국가정원1호길 47', id : 'k2', url:"https://ko.wikipedia.org/wiki/%EC%88%9C%EC%B2%9C%EB%A7%8C%EA%B5%AD%EA%B0%80%EC%A0%95%EC%9B%90"}
+        ];
+        //경상북도
+        var k10PlastList = [
+            { title : '경주월드', address : '경북 경주시 보문로 544', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EA%B2%BD%EC%A3%BC%EC%9B%94%EB%93%9C" },
+            { title : '안동 하회마을', address : '경북 안동시 풍천면 전서로 186', id : 'k2', url:"https://ko.wikipedia.org/wiki/%EC%95%88%EB%8F%99_%ED%95%98%ED%9A%8C%EB%A7%88%EC%9D%84"  }
+        ];
+        //경상남도
+        var k11PlastList = [
+            { title : '동피랑마을', address : '경남 통영시 동피랑1길 6-18', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EB%8F%99%ED%94%BC%EB%9E%91%EB%A7%88%EC%9D%84" },
+            { title : '가야랜드', address : '경남 김해시 인제로 368 가야랜드', id : 'k2', url:"http://gaya-land.com/html/sub01_02.html"  }
+        ];   
+        //제주도
+        var k12PlastList = [
+            { title : '새별오름', address : '제주 제주시 애월읍 봉성리 산59-8', id : 'k1', url:"https://ko.wikipedia.org/wiki/%EC%83%88%EB%B3%84%EC%98%A4%EB%A6%84" },
+            { title : '섭지코지', address : '제주 서귀포시 성산읍 고성리', id : 'k2', url:"https://ko.wikipedia.org/wiki/%EC%84%AD%EC%A7%80%EC%BD%94%EC%A7%80"  },
+            { title : '함덕해수욕장', address : '제주 제주시 조천읍 조함해안로 525', id : 'k3', url:"https://ko.wikipedia.org/wiki/%ED%95%A8%EB%8D%95%ED%95%B4%EC%88%98%EC%9A%95%EC%9E%A5"  }
+        ];                
+
+        // 지도api init
+        var con = document.getElementById("map");
+        var opt = {
+                center : new kakao.maps.LatLng(map_strd_posX, map_strd_posY),
+                level : mapInitLevel
+        };
+        var map = new kakao.maps.Map(con, opt);
+
+        // 지도api place marker 처리 start
+        drawPinPoint(k1PlastList);
+
+        // 지도api place marker 처리 end
+        function moveLocation(posX, posY, level, placeName){
+            var moveLatLon = new kakao.maps.LatLng(posX, posY);
+            map.panTo(moveLatLon);
+            map.setLevel(level);
+
+            var list = k1PlastList;
+            switch(placeName){
+                case "k2":
+                list = k2PlastList;
+                    break;
+                case "k3":
+                list = k3PlastList;
+                    break;
+                case "k4":
+                list = k4PlastList;
+                    break;
+                case "k5":
+                list = k5PlastList;
+                    break;
+                case "k6":
+                list = k6PlastList;
+                    break;
+                case "k7":
+                list = k7PlastList;
+                    break;
+                case "k8":
+                list = k8PlastList;
+                    break;
+                case "k9":
+                list = k9PlastList;
+                    break;
+                case "k10":
+                list = k10PlastList;
+                    break;
+                case "k11":
+                list = k11PlastList;
+                    break;
+                case "k12":
+                list = k12PlastList;
+                    break;
+            };
+            drawPinPoint(list);
+        }
+
+        function openUrlOnNewTab(url){
+            var win = window.open(url, '_blank');
+            win.focus();
+        }
+
+        function drawPinPoint(placeList){
+            var ul = document.getElementById("placeList");
+            while (ul.hasChildNodes()) {
+                ul.removeChild(ul.firstChild);
+            }
+            
+            placeList.forEach(function (position) { 
+            // 주소로 좌표를 검색합니다
+            geocoder.addressSearch(position.address, function(result, status) {
+                // 정상적으로 검색이 완료됐으면
+                if (status === kakao.maps.services.Status.OK) {
+                    var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                    // 결과값으로 받은 위치를 마커로 표시합니다
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: coords,
+                        clickable: true
+                    });
+
+                    // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+                    map.setCenter(coords);
+
+                    var iwContent = '<div style="padding:5px;" click="oneUrlOnNewTab();">'+ position.title +'</div>', // 인포윈도우에 표출될 내용으로 HTML 문자열이나 document element가 가능합니다
+                    iwRemoveable = true;
+                    var infowindow = new kakao.maps.InfoWindow({
+                        content : iwContent,
+                        removable : iwRemoveable
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseover', function() {
+                    // 마우스 커서를 지도 아이콘에 대면 인포윈도우를 표시합니다
+                        infowindow.open(map, marker); 
+                    });
+                    kakao.maps.event.addListener(marker, 'mouseout', function() {
+                    // 마우스 커서를 지도 아이콘에서 떼면 인포윈도우가 사라집니다
+                            infowindow.close(map, marker); 
+                    });
+                    // 지도 아이콘을 클릭하면 해당 장소 url로 이동되게 합니다
+                    kakao.maps.event.addListener(marker, 'click', function() {
+                    if (position?.url) openUrlOnNewTab(position.url)
+                    infowindow.close();
+                    });
+                    var li = document.createElement("li");
+                    var textNode = document.createTextNode(position.title);
+                    li.setAttribute("id", position.id);
+                    li.appendChild(textNode);
+                    ul.appendChild(li);
+                }
+            });
+        });
+        }
+    </script>
+</body>
+</html>

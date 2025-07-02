@@ -1,0 +1,25 @@
+body{
+    font-size: 3.5em; text-align: center;
+}
+.header{
+    display: flex; min-height: 120px; border: 1px solid lightgray; justify-content: center; align-items: center;
+}
+.body{
+    display: flex; border: 1px solid lightgray; justify-content: center; 
+}
+.content{
+    display: flex;
+}
+.leftside{
+    min-width: 200px; border: 1px solid lightgray;
+}
+.rightside{
+    padding: 50px; border: 1px solid lightgray;
+}
+
+ul{
+    padding-left: 0;
+}
+ul li{
+    font-size: 16px; line-height: 200%; list-style: none; cursor: pointer; color: #333;
+}
